@@ -15,7 +15,7 @@ cask "lzc-client-desktop" do
   desc "LazyCat desktop client application"
   homepage "https://lazycat.cloud/"
 
-  app "LazyCat.app"
+  app "懒猫微服.app"
 
   zap trash: [
     "~/Library/Application Support/LazyCat",

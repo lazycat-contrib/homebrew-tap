@@ -1,84 +1,120 @@
-# LazyCat Client Desktop - Homebrew Cask
+# LazyCat Homebrew Tap
 
-这是 LazyCat Desktop Client 的 Homebrew Cask 配置文件，支持 Intel (x64) 和 Apple Silicon (arm64) 两种架构。
+这是 LazyCat 相关软件的 Homebrew Tap 仓库，提供便捷的 macOS 应用安装方式。
+
+## 使用方法
+
+### 添加 Tap
+
+```bash
+brew tap lazycat-contrib/tap
+```
+
+### 安装应用
+
+```bash
+# 安装 LazyCat 桌面客户端
+brew install --cask lzc-client-desktop
+
+# 更多应用即将添加...
+```
+
+### 卸载应用
+
+```bash
+brew uninstall --cask <应用名称>
+```
+
+### 卸载 Tap
+
+如果要完全移除此 Tap：
+
+```bash
+# 先卸载所有通过此 Tap 安装的应用
+brew uninstall --cask lzc-client-desktop
+
+# 然后移除 Tap
+brew untap lazycat-contrib/tap
+```
+
+## 可用软件
+
+| 软件名称 | 说明 | 安装命令 | 当前版本 |
+|---------|------|---------|----------|
+| lzc-client-desktop | LazyCat 桌面客户端 | `brew install --cask lzc-client-desktop` | v1.6.0 |
 
 ## 特性
 
-- 自动识别系统架构（Intel 或 Apple Silicon）
-- 自动下载对应架构的安装包
-- SHA256 校验和验证
+- 🍎 支持 Intel (x64) 和 Apple Silicon (arm64) 两种架构
+- 🔒 所有软件包都经过 SHA256 校验和验证
+- ⚡ 自动识别系统架构并下载对应版本
+- 📦 遵循 Homebrew Cask 标准规范
 
-## 安装方法
+## 开发者指南
 
-### 方式 1: 从本地安装（开发/测试）
+### 添加新软件
 
-```bash
-# 在本目录下执行
-brew install --cask ./Casks/lzc-client-desktop.rb
-```
+1. 在 `Casks/` 目录下创建新的 `.rb` 文件
+2. 按照 Homebrew Cask 规范编写配置
+3. 提交 Pull Request
 
-### 方式 2: 从 Tap 安装（推荐）
+### 更新现有软件版本
 
-这个 Cask 将发布到 `lazycat-contrib/homebrew-tap` 仓库。用户可以通过以下方式安装：
+当软件发布新版本时：
 
-```bash
-# 添加 tap
-brew tap lazycat-contrib/tap
-
-# 安装应用
-brew install --cask lzc-client-desktop
-```
-
-### 发布到 Tap 仓库
-
-1. 将此仓库推送到 `https://github.com/lazycat-contrib/homebrew-tap`
-2. Cask 文件已放置在标准的 `Casks/` 目录下
-3. 用户即可通过上述命令安装
-
-## 卸载
-
-```bash
-brew uninstall --cask lzc-client-desktop
-```
-
-## 更新版本
-
-当发布新版本时，需要：
-
-1. 更新 `version` 字段
-2. 下载新版本的两个架构的 DMG 文件
+1. 更新对应 Cask 文件中的 `version` 字段
+2. 下载新版本的安装包（Intel 和 Apple Silicon 版本）
 3. 计算新的 SHA256 校验和：
    ```bash
-   shasum -a 256 lzc-client-desktop_v<VERSION>_x64.dmg
-   shasum -a 256 lzc-client-desktop_v<VERSION>_arm64.dmg
+   shasum -a 256 <软件包文件名>_x64.dmg
+   shasum -a 256 <软件包文件名>_arm64.dmg
    ```
 4. 更新 Cask 文件中对应的 `sha256` 值
+5. 提交更新
 
-## 文件说明
+### 本地测试
 
-- `Casks/lzc-client-desktop.rb` - Homebrew Cask 配置文件
-- `lzc-client-desktop_v1.6.0_x64.dmg` - Intel 架构的安装包（仅用于计算校验和，不提交到仓库）
-- `lzc-client-desktop_v1.6.0_arm64.dmg` - Apple Silicon 架构的安装包（仅用于计算校验和，不提交到仓库）
-- `.gitignore` - Git 忽略配置，排除 DMG 文件
+在发布前可以先在本地测试 Cask 配置：
 
-## 版本信息
+```bash
+# 测试安装
+brew install --cask ./Casks/<cask-name>.rb
 
-当前版本: v1.6.0
+# 测试卸载
+brew uninstall --cask <cask-name>
 
-## Cask 结构说明
+# Cask 语法检查
+brew audit --cask <cask-name>
+```
+
+### Cask 多架构配置示例
 
 ```ruby
-on_intel do
-  # Intel 架构的配置
-  sha256 "..."  # x64 版本的校验和
-  url "..."     # x64 版本的下载链接
-end
+cask "example-app" do
+  version "1.0.0"
 
-on_arm do
-  # Apple Silicon 架构的配置
-  sha256 "..."  # arm64 版本的校验和
-  url "..."     # arm64 版本的下载链接
+  on_intel do
+    sha256 "..."  # Intel 版本的 SHA256
+    url "https://example.com/download/app_v#{version}_x64.dmg"
+  end
+
+  on_arm do
+    sha256 "..."  # Apple Silicon 版本的 SHA256
+    url "https://example.com/download/app_v#{version}_arm64.dmg"
+  end
+
+  name "Example App"
+  desc "Example application description"
+  homepage "https://example.com/"
+
+  app "Example.app"
 end
 ```
 
-Homebrew 会根据用户的系统架构自动选择对应的配置进行安装。
+## 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+## 许可证
+
+本仓库中的 Cask 配置文件遵循各软件自身的许可证。
