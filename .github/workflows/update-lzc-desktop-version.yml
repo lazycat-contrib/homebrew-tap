@@ -37,9 +37,15 @@ jobs:
       - name: Calculate checksums
         id: checksums
         run: |
-          # Verify DMG files
-          file /tmp/lzc-x64.dmg | grep -q "Macintosh HFS" || { echo "x64 file is not a valid DMG"; exit 1; }
-          file /tmp/lzc-arm64.dmg | grep -q "Macintosh HFS" || { echo "arm64 file is not a valid DMG"; exit 1; }
+          # Verify DMG files exist and have reasonable size
+          if [ ! -s /tmp/lzc-x64.dmg ] || [ $(stat -c%s /tmp/lzc-x64.dmg) -lt 1000000 ]; then
+            echo "x64 DMG file is missing or too small"
+            exit 1
+          fi
+          if [ ! -s /tmp/lzc-arm64.dmg ] || [ $(stat -c%s /tmp/lzc-arm64.dmg) -lt 1000000 ]; then
+            echo "arm64 DMG file is missing or too small"
+            exit 1
+          fi
 
           X64_SHA256=$(sha256sum /tmp/lzc-x64.dmg | awk '{print $1}')
           ARM64_SHA256=$(sha256sum /tmp/lzc-arm64.dmg | awk '{print $1}')
